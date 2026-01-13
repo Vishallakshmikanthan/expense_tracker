@@ -24,6 +24,7 @@ function App() {
                 <Route path="/expenses" element={<Expenses />} />
                 <Route path="/edit/:id" element={<EditExpense />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/savings" element={<Savings />} />
                 <Route path="/budgets" element={<Budgets />} />
                 <Route path="/categories" element={<Categories />} />
             </Route>

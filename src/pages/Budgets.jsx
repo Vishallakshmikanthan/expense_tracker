@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, IndianRupee } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function Budgets() {
     const { user } = useAuth();
@@ -13,7 +14,7 @@ export default function Budgets() {
     const [categories, setCategories] = useState([]);
 
     // Form state
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('_GLOBAL_'); // Default to Global
     const [amount, setAmount] = useState('');
 
     useEffect(() => {
@@ -28,22 +29,26 @@ export default function Budgets() {
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
             const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
 
-            // 1. Fetch Expenses for aggregation
+            // 1. Fetch Expenses
             const { data: expenses } = await supabase.from('expenses').select('amount, category').gte('date', startOfMonth).lte('date', endOfMonth);
             const spendingMap = expenses.reduce((acc, item) => {
                 acc[item.category] = (acc[item.category] || 0) + item.amount;
                 return acc;
             }, {});
+
+            // Calculate Total Spending
+            const totalSpent = expenses.reduce((acc, item) => acc + item.amount, 0);
+            spendingMap['_GLOBAL_'] = totalSpent; // Special key for total
+
             setSpending(spendingMap);
 
-            // 2. Fetch Existing Budgets
+            // 2. Fetch Budgets
             const { data: budgetData } = await supabase.from('budgets').select('*').eq('month', currentMonthStr);
             setBudgets(budgetData || []);
 
             // 3. Fetch Categories
             const { data: catData } = await supabase.from('categories').select('name').order('name');
             setCategories(catData || []);
-            if (catData.length > 0) setSelectedCategory(catData[0].name);
 
         } catch (error) {
             console.error(error);
@@ -59,7 +64,6 @@ export default function Budgets() {
             const now = new Date();
             const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-            // Upsert logic: Delete old, insert new (for simplicity as constraints are unique)
             await supabase.from('budgets').delete().match({ user_id: user.id, category: selectedCategory, month: currentMonthStr });
             const { error } = await supabase.from('budgets').insert({
                 user_id: user.id,
@@ -77,7 +81,7 @@ export default function Budgets() {
     };
 
     return (
-        <div className="dashboard">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="dashboard">
             <header className="app-header">
                 <button onClick={() => navigate('/')} className="btn-logout" style={{ display: 'flex', alignItems: 'center' }}>
                     <ChevronLeft size={20} /> Home
@@ -87,33 +91,64 @@ export default function Budgets() {
             </header>
 
             <div style={{ padding: '0 1rem' }}>
-                {/* Budget Form */}
                 <div className="auth-card" style={{ maxWidth: '100%', marginBottom: '2rem' }}>
-                    <h4>Set Limit for this Month</h4>
+                    <h4>Set Budget Limit</h4>
                     <form onSubmit={handleSetBudget} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
                         <select
                             value={selectedCategory}
                             onChange={e => setSelectedCategory(e.target.value)}
                             style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }}
                         >
+                            <option value="_GLOBAL_">Total Monthly Budget</option>
+                            <option disabled>──────────</option>
                             {categories.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
                         </select>
-                        <input
-                            type="number"
-                            placeholder="Amount"
-                            value={amount}
-                            onChange={e => setAmount(e.target.value)}
-                            style={{ width: 100, padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }}
-                        />
+                        <div style={{ position: 'relative', width: 100 }}>
+                            <span style={{ position: 'absolute', left: 10, top: 12, color: '#999' }}>₹</span>
+                            <input
+                                type="number"
+                                placeholder="Amount"
+                                value={amount}
+                                onChange={e => setAmount(e.target.value)}
+                                style={{ width: '100%', padding: '0.75rem 0.5rem 0.75rem 1.8rem', borderRadius: '8px', border: '1px solid #ddd' }}
+                            />
+                        </div>
                         <button type="submit" className="btn" style={{ width: 'auto' }}>Set</button>
                     </form>
                 </div>
 
-                {/* Overview List */}
                 <div className="expense-list" style={{ padding: 0 }}>
-                    {categories.map(cat => {
+                    {/* Render Global Budget First */}
+                    {(() => {
+                        const globalBudget = budgets.find(b => b.category === '_GLOBAL_');
+                        const globalSpent = spending['_GLOBAL_'] || 0;
+                        const globalLimit = globalBudget ? globalBudget.amount : 0;
+                        if (!globalBudget && globalSpent === 0) return null;
+
+                        const pct = globalLimit > 0 ? (globalSpent / globalLimit) * 100 : 0;
+                        const isOver = globalSpent > globalLimit && globalLimit > 0;
+
+                        return (
+                            <motion.div layout className="expense-item" style={{ display: 'block', border: '2px solid #6366f1' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                    <span style={{ fontWeight: 700, color: '#6366f1' }}>Total Monthly Spending</span>
+                                    <span>₹{globalSpent.toLocaleString()} / <span style={{ color: '#999' }}>{globalLimit || '∞'}</span></span>
+                                </div>
+                                <div style={{ height: 12, background: '#f1f3f5', borderRadius: 6, overflow: 'hidden' }}>
+                                    <div style={{
+                                        height: '100%',
+                                        width: `${Math.min(pct, 100)}%`,
+                                        background: isOver ? '#ff6b6b' : '#6366f1',
+                                        transition: 'width 0.5s ease-out'
+                                    }}></div>
+                                </div>
+                            </motion.div>
+                        );
+                    })()}
+
+                    {categories.map((cat, i) => {
                         const budgetItem = budgets.find(b => b.category === cat.name);
-                        if (!budgetItem && !spending[cat.name]) return null; // Hide unused if no budget/spending
+                        if (!budgetItem && !spending[cat.name]) return null;
 
                         const budgetAmount = budgetItem ? budgetItem.amount : 0;
                         const spent = spending[cat.name] || 0;
@@ -121,25 +156,31 @@ export default function Budgets() {
                         const isOver = spent > budgetAmount && budgetAmount > 0;
 
                         return (
-                            <div key={cat.name} className="expense-item" style={{ display: 'block' }}>
+                            <motion.div
+                                key={cat.name}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.05 }}
+                                className="expense-item"
+                                style={{ display: 'block' }}
+                            >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                                     <span style={{ fontWeight: 500 }}>{cat.name}</span>
-                                    <span>${spent} / <span style={{ color: '#999' }}>{budgetAmount || '∞'}</span></span>
+                                    <span>₹{spent.toLocaleString()} / <span style={{ color: '#999' }}>{budgetAmount || '∞'}</span></span>
                                 </div>
                                 <div style={{ height: 8, background: '#f1f3f5', borderRadius: 4, overflow: 'hidden' }}>
                                     <div style={{
                                         height: '100%',
                                         width: `${Math.min(pct, 100)}%`,
-                                        background: isOver ? '#ff6b6b' : '#34c759',
-                                        transition: 'width 0.3s'
+                                        background: isOver ? '#ff6b6b' : '#34d399',
+                                        transition: 'width 0.5s ease-out'
                                     }}></div>
                                 </div>
-                                {isOver && <div style={{ fontSize: '0.8rem', color: '#ff6b6b', marginTop: 4 }}>Over budget!</div>}
-                            </div>
+                            </motion.div>
                         );
                     })}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

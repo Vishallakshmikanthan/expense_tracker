@@ -9,6 +9,7 @@ export default function Categories() {
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [newCategory, setNewCategory] = useState('');
+    const [newCatType, setNewCatType] = useState('expense'); // Default expense
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -27,7 +28,7 @@ export default function Categories() {
             setLoading(true);
             const { data, error } = await supabase.from('categories').insert({
                 name: newCategory,
-                type: 'expense',
+                type: newCatType,
                 user_id: user.id
             }).select().single();
 
@@ -67,6 +68,14 @@ export default function Categories() {
             <div style={{ padding: '0 1rem' }}>
                 <div className="auth-card" style={{ maxWidth: '100%', marginBottom: '2rem' }}>
                     <form onSubmit={handleAdd} style={{ display: 'flex', gap: '0.5rem' }}>
+                        <select
+                            value={newCatType}
+                            onChange={e => setNewCatType(e.target.value)}
+                            style={{ width: '120px', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }}
+                        >
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
                         <input
                             type="text"
                             placeholder="New Category Name"

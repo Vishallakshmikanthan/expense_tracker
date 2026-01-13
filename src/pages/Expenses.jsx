@@ -1,27 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Trash2, Filter } from 'lucide-react';
+import { ChevronLeft, Trash2, Edit2, Filter, IndianRupee } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Expenses() {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
     const [expenses, setExpenses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [filterDate, setFilterDate] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
+    const [filterCategory, setFilterCategory] = useState('All');
     const [categories, setCategories] = useState([]);
 
-    // Filters
-    const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
-    const [selectedCategory, setSelectedCategory] = useState('All');
-
     useEffect(() => {
-        fetchCategories();
         fetchExpenses();
-    }, [selectedMonth, selectedCategory]);
+        fetchCategories();
+    }, [filterDate, filterCategory]);
 
     const fetchCategories = async () => {
-        const { data } = await supabase.from('categories').select('*').or(`user_id.is.null,user_id.eq.${user.id}`);
+        const { data } = await supabase.from('categories').select('name');
         if (data) setCategories(data);
     };
 
@@ -33,34 +32,31 @@ export default function Expenses() {
                 .select('*')
                 .order('date', { ascending: false });
 
-            // Apply Month Filter
-            if (selectedMonth) {
-                const [year, month] = selectedMonth.split('-');
-                const startDate = new Date(year, month - 1, 1).toISOString();
-                const endDate = new Date(year, month, 0).toISOString();
-                query = query.gte('date', startDate).lte('date', endDate);
+            if (filterDate) {
+                const [year, month] = filterDate.split('-');
+                const start = new Date(year, month - 1, 1).toISOString();
+                const end = new Date(year, month, 0).toISOString();
+                query = query.gte('date', start).lte('date', end);
             }
 
-            // Apply Category Filter
-            if (selectedCategory !== 'All') {
-                query = query.eq('category', selectedCategory);
+            if (filterCategory !== 'All') {
+                query = query.eq('category', filterCategory);
             }
 
             const { data, error } = await query;
             if (error) throw error;
             setExpenses(data);
         } catch (error) {
-            console.error('Error fetching expenses:', error);
+            alert(error.message);
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this expense?')) return;
+        if (!window.confirm('Delete this expense?')) return;
         try {
-            const { error } = await supabase.from('expenses').delete().eq('id', id);
-            if (error) throw error;
+            await supabase.from('expenses').delete().eq('id', id);
             setExpenses(expenses.filter(ex => ex.id !== id));
         } catch (error) {
             alert(error.message);
@@ -68,67 +64,81 @@ export default function Expenses() {
     };
 
     return (
-        <div className="dashboard">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="dashboard">
             <header className="app-header">
                 <button onClick={() => navigate('/')} className="btn-logout" style={{ display: 'flex', alignItems: 'center' }}>
                     <ChevronLeft size={20} /> Home
                 </button>
-                <h2>Expenses</h2>
+                <h2>Transactions</h2>
                 <div style={{ width: 32 }}></div>
             </header>
 
             <div style={{ padding: '0 1rem' }}>
-                <div className="auth-card" style={{ maxWidth: '100%', marginBottom: '1rem', padding: '1rem' }}>
+                {/* Filters */}
+                <div className="auth-card" style={{ maxWidth: '100%', marginBottom: '1.5rem', padding: '1rem' }}>
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                         <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Month</label>
+                            <label style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4, display: 'block' }}>Month</label>
                             <input
                                 type="month"
-                                value={selectedMonth}
-                                onChange={e => setSelectedMonth(e.target.value)}
-                                style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ddd' }}
+                                value={filterDate}
+                                onChange={e => setFilterDate(e.target.value)}
+                                style={{ padding: '0.5rem' }}
                             />
                         </div>
                         <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Category</label>
+                            <label style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4, display: 'block' }}>Category</label>
                             <select
-                                value={selectedCategory}
-                                onChange={e => setSelectedCategory(e.target.value)}
-                                style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px solid #ddd' }}
+                                value={filterCategory}
+                                onChange={e => setFilterCategory(e.target.value)}
+                                style={{ padding: '0.6rem' }}
                             >
                                 <option value="All">All Categories</option>
-                                {categories.map(cat => (
-                                    <option key={cat.id} value={cat.name}>{cat.name}</option>
-                                ))}
+                                {categories.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
                             </select>
                         </div>
                     </div>
                 </div>
 
                 <div className="expense-list" style={{ padding: 0 }}>
-                    {loading ? <p style={{ textAlign: 'center' }}>Loading...</p> : expenses.length === 0 ? (
-                        <p className="empty-state">No expenses found.</p>
-                    ) : (
-                        expenses.map(item => (
-                            <div key={item.id} className="expense-item">
-                                <div className="expense-left">
-                                    <div className="category-tag">{item.category}</div>
-                                    <div>
-                                        <div className="expense-note">{item.description || 'No description'}</div>
-                                        <div className="expense-date">{new Date(item.date).toLocaleDateString()}</div>
+                    <AnimatePresence>
+                        {expenses.map(item => (
+                            <motion.div
+                                layout
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                key={item.id}
+                                className="expense-item"
+                            >
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <span style={{ fontWeight: 600, fontSize: '1rem' }}>{item.category}</span>
+                                        <span style={{ fontSize: '0.8rem', color: '#999' }}>{new Date(item.date).toLocaleDateString()}</span>
+                                    </div>
+                                    {item.description && <div style={{ fontSize: '0.9rem', color: '#555', marginTop: 4 }}>{item.description}</div>}
+                                </div>
+                                <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                    <span className="expense-amount" style={{ display: 'flex', alignItems: 'center' }}>
+                                        <IndianRupee size={16} strokeWidth={2.5} />{item.amount}
+                                    </span>
+                                    <div style={{ display: 'flex', gap: '0.25rem' }}>
+                                        <button onClick={() => navigate(`/edit/${item.id}`)} className="btn-logout" style={{ background: '#f3f4f6', color: '#6366f1' }}>
+                                            <Edit2 size={16} />
+                                        </button>
+                                        <button onClick={() => handleDelete(item.id)} className="btn-logout">
+                                            <Trash2 size={16} />
+                                        </button>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                    <div className="expense-amount">-${item.amount}</div>
-                                    <button onClick={() => handleDelete(item.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff6b6b' }}>
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
-                            </div>
-                        ))
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                    {expenses.length === 0 && !loading && (
+                        <div style={{ textAlign: 'center', color: '#999', padding: '2rem' }}>No transactions found.</div>
                     )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
