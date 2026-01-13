@@ -66,7 +66,8 @@ export default function AddExpense() {
                 amount: parseFloat(formData.amount),
                 category: formData.category,
                 description: formData.description,
-                date: new Date(formData.date).toISOString()
+                date: new Date(formData.date).toISOString(),
+                type: formData.type
             });
 
             if (error) throw error;

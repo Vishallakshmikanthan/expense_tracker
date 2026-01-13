@@ -25,29 +25,20 @@ export default function Savings() {
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
             const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
 
-            // Fetch transactions for this month with category info to determine type
+            // Fetch transactions for this month
             const { data: transactions, error } = await supabase
                 .from('expenses')
-                .select('amount, category')
+                .select('amount, type') // Fetch type directly
                 .gte('date', startOfMonth)
                 .lte('date', endOfMonth);
 
             if (error) throw error;
 
-            // Note: 'expenses' table lacks 'type', so we must fetch all categories to map types
-            const { data: categories } = await supabase.from('categories').select('name, type');
-
-            // Map category name to type
-            const catTypeMap = {};
-            if (categories) {
-                categories.forEach(c => catTypeMap[c.name] = c.type);
-            }
-
             let inc = 0;
             let exp = 0;
 
             transactions.forEach(t => {
-                const type = catTypeMap[t.category] || 'expense'; // Default to expense if not found
+                const type = t.type || 'expense'; // Fallback
                 if (type === 'income') inc += t.amount;
                 else exp += t.amount;
             });

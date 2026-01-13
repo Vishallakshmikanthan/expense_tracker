@@ -34,10 +34,18 @@ export default function Home() {
 
             if (expError) throw expError;
 
-            // Filter only true expenses just in case mixed types exist
-            const spending = expenses.reduce((acc, item) => acc + item.amount, 0);
+            // Filter only 'expense' type for Total Spent
+            const spending = expenses
+                .filter(item => item.type === 'expense')
+                .reduce((acc, item) => acc + item.amount, 0);
+
             setTotalSpent(spending);
             setRecentExpenses(expenses.slice(0, 5));
+
+            // ... (rest of function logic unchanged)
+            // [SKIP MATCHING MIDDLE CONTENT AND JUMP TO UI LOOP]
+            // Actually, since I can't skip, I will use multi_replace.
+            // Aborting this call to use multi_replace for accuracy.
 
             // 2. Fetch Total Budget (Special Category '_GLOBAL_')
             const { data: globalBudget, error: budError } = await supabase
@@ -127,8 +135,8 @@ export default function Home() {
                             className="expense-item"
                         >
                             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                <div style={{ background: '#f3f4f6', padding: '10px', borderRadius: '12px' }}>
-                                    <TrendingDown size={20} color="#ef4444" />
+                                <div style={{ background: item.type === 'income' ? '#d1fae5' : '#fee2e2', padding: '10px', borderRadius: '12px' }}>
+                                    {item.type === 'income' ? <TrendingUp size={20} color="#10b981" /> : <TrendingDown size={20} color="#ef4444" />}
                                 </div>
                                 <div>
                                     <div style={{ fontWeight: '600' }}>{item.description || item.category}</div>
@@ -137,8 +145,8 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="expense-amount" style={{ display: 'flex', alignItems: 'center' }}>
-                                -<IndianRupee size={16} strokeWidth={3} />{item.amount.toLocaleString()}
+                            <div className="expense-amount" style={{ display: 'flex', alignItems: 'center', color: item.type === 'income' ? '#10b981' : '#ef4444' }}>
+                                {item.type === 'income' ? '+' : '-'}<IndianRupee size={16} strokeWidth={3} />{item.amount.toLocaleString()}
                             </div>
                         </motion.div>
                     ))

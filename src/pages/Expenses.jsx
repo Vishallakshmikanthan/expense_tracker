@@ -119,8 +119,8 @@ export default function Expenses() {
                                     {item.description && <div style={{ fontSize: '0.9rem', color: '#555', marginTop: 4 }}>{item.description}</div>}
                                 </div>
                                 <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                    <span className="expense-amount" style={{ display: 'flex', alignItems: 'center' }}>
-                                        <IndianRupee size={16} strokeWidth={2.5} />{item.amount}
+                                    <span className="expense-amount" style={{ display: 'flex', alignItems: 'center', color: item.type === 'income' ? '#10b981' : '#ef4444' }}>
+                                        {item.type === 'income' ? '+' : '-'}<IndianRupee size={16} strokeWidth={2.5} />{item.amount}
                                     </span>
                                     <div style={{ display: 'flex', gap: '0.25rem' }}>
                                         <button onClick={() => navigate(`/edit/${item.id}`)} className="btn-logout" style={{ background: '#f3f4f6', color: '#6366f1' }}>
