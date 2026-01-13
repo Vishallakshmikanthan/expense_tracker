@@ -9,6 +9,7 @@ import EditExpense from './pages/EditExpense';
 import Profile from './pages/Profile';
 import Budgets from './pages/Budgets';
 import Categories from './pages/Categories';
+import Savings from './pages/Savings';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Placeholder for Home/Dash until implemented
