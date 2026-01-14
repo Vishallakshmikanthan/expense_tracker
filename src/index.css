@@ -1,5 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
---radius-lg: 16px;
+
+:root {
+    /* Fintech / Modern Palette */
+    --bg-primary: #F8FAFC;
+    /* Light Blue-Grey Background */
+    --bg-surface: #FFFFFF;
+    --bg-hover: #F1F5F9;
+
+    --text-primary: #0F172A;
+    /* Slate 900 */
+    --text-secondary: #64748B;
+    /* Slate 500 */
+    --text-tertiary: #94A3B8;
+
+    --border-color: #E2E8F0;
+
+    /* Semantic Colors */
+    --primary-color: #3B82F6;
+    /* Blue 500 */
+    --income-color: #10B981;
+    /* Emerald 500 */
+    --expense-color: #EF4444;
+    /* Red 500 */
+    --savings-color: #8B5CF6;
+    /* Violet 500 */
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    --radius-md: 12px;
+    --radius-lg: 16px;
 }
 
 * {
