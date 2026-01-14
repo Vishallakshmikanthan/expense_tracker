@@ -89,28 +89,28 @@ export default function Home() {
             </header>
 
             <div className="stats-grid">
-                <motion.div whileHover={{ scale: 1.02 }} className="stat-card">
-                    <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #818cf8)' }}>
-                        <Wallet size={28} />
+                <motion.div whileHover={{ y: -2 }} className="stat-card">
+                    <div className="stat-icon">
+                        <Wallet size={20} strokeWidth={1.5} />
                     </div>
                     <div className="stat-info">
                         <span className="stat-label">Total Spent</span>
                         <span className="stat-value" style={{ display: 'flex', alignItems: 'center' }}>
-                            <IndianRupee size={22} strokeWidth={2.5} />{totalSpent.toLocaleString()}
+                            <IndianRupee size={20} strokeWidth={2} />{totalSpent.toLocaleString()}
                         </span>
                     </div>
                 </motion.div>
 
-                <motion.div whileHover={{ scale: 1.02 }} className="stat-card">
-                    <div className="stat-icon" style={{ background: isOverBudget ? 'linear-gradient(135deg, #ef4444, #f87171)' : 'linear-gradient(135deg, #10b981, #34d399)' }}>
-                        {isOverBudget ? <TrendingDown size={28} /> : <TrendingUp size={28} />}
+                <motion.div whileHover={{ y: -2 }} className="stat-card">
+                    <div className="stat-icon">
+                        {isOverBudget ? <TrendingDown size={20} color="#EB5757" /> : <TrendingUp size={20} color="#27AE60" />}
                     </div>
                     <div className="stat-info">
                         <span className="stat-label">Remaining Budget</span>
-                        <span className={`stat-value ${isOverBudget ? 'text-danger' : 'text-success'}`} style={{ display: 'flex', alignItems: 'center', color: isOverBudget ? '#ef4444' : '#10b981' }}>
-                            <IndianRupee size={22} strokeWidth={2.5} />{remaining.toLocaleString()}
+                        <span className={`stat-value ${isOverBudget ? 'text-danger' : 'text-success'}`} style={{ display: 'flex', alignItems: 'center' }}>
+                            <IndianRupee size={20} strokeWidth={2} />{remaining.toLocaleString()}
                         </span>
-                        <span className="stat-sub">{budgetLimit > 0 ? `of ₹${budgetLimit.toLocaleString()}` : 'No limit set'}</span>
+                        <span className="stat-sub" style={{ fontSize: '0.8rem', color: '#999' }}>{budgetLimit > 0 ? `of ₹${budgetLimit.toLocaleString()}` : 'No limit set'}</span>
                     </div>
                 </motion.div>
             </div>
@@ -135,18 +135,26 @@ export default function Home() {
                             className="expense-item"
                         >
                             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                <div style={{ background: item.type === 'income' ? '#d1fae5' : '#fee2e2', padding: '10px', borderRadius: '12px' }}>
-                                    {item.type === 'income' ? <TrendingUp size={20} color="#10b981" /> : <TrendingDown size={20} color="#ef4444" />}
+                                <div style={{ 
+                                    padding: '8px', 
+                                    borderRadius: '4px',
+                                    background: item.type === 'income' ? '#F0FDF4' : '#FEF2F2',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}>
+                                    {item.type === 'income' ? <TrendingUp size={16} color="#27AE60" /> : <TrendingDown size={16} color="#EB5757" />}
                                 </div>
                                 <div>
-                                    <div style={{ fontWeight: '600' }}>{item.description || item.category}</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                                    <div style={{ fontWeight: '500', fontSize: '0.95rem' }}>{item.description || item.category}</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#999' }}>
                                         {item.category} • {new Date(item.date).toLocaleDateString()}
                                     </div>
                                 </div>
                             </div>
-                            <div className="expense-amount" style={{ display: 'flex', alignItems: 'center', color: item.type === 'income' ? '#10b981' : '#ef4444' }}>
-                                {item.type === 'income' ? '+' : '-'}<IndianRupee size={16} strokeWidth={3} />{item.amount.toLocaleString()}
+                            <div className="expense-amount" style={{ 
+                                display: 'flex', alignItems: 'center', 
+                                color: item.type === 'income' ? '#27AE60' : '#37352F' 
+                            }}>
+                                {item.type === 'income' ? '+' : ''}<IndianRupee size={14} strokeWidth={2} />{item.amount.toLocaleString()}
                             </div>
                         </motion.div>
                     ))
