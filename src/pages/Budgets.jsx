@@ -29,15 +29,19 @@ export default function Budgets() {
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
             const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
 
-            // 1. Fetch Expenses
-            const { data: expenses } = await supabase.from('expenses').select('amount, category').gte('date', startOfMonth).lte('date', endOfMonth);
-            const spendingMap = expenses.reduce((acc, item) => {
+            // 1. Fetch Expenses (including type)
+            const { data: expenses } = await supabase.from('expenses').select('amount, category, type').gte('date', startOfMonth).lte('date', endOfMonth);
+
+            // Filter out Income
+            const expenseItems = expenses.filter(item => item.type === 'expense');
+
+            const spendingMap = expenseItems.reduce((acc, item) => {
                 acc[item.category] = (acc[item.category] || 0) + item.amount;
                 return acc;
             }, {});
 
             // Calculate Total Spending
-            const totalSpent = expenses.reduce((acc, item) => acc + item.amount, 0);
+            const totalSpent = expenseItems.reduce((acc, item) => acc + item.amount, 0);
             spendingMap['_GLOBAL_'] = totalSpent; // Special key for total
 
             setSpending(spendingMap);

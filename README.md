@@ -1,84 +1,57 @@
-# 💰 Expense Tracker Web App
+# 💰 Personal Finance Manager
 
-A premium, full-stack Expense Tracker application built with **React (Vite)** and **Supabase**. Manage your personal finances with a clean, modern UI featuring glassmorphism and real-time data sync.
+A sophisticated, minimalist financial tracking application designed for personal wealth management. Built with a focus on data privacy, real-time synchronization, and a clean, content-first aesthetic inspired by modern productivity tools.
 
-![Login Screen](https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=1000) *(Replace with actual screenshot after deployment)*
 
-## ✨ Features
 
-- **🔐 Authentication**: Secure Email/Password login & signup (Supabase Auth).
-- **📊 Dashboard**: Real-time overview of total spending and remaining monthly budget.
-- **💸 Expense Management**:
-  - Add expenses with dynamic categories.
-  - Filter expenses by Month and Category.
-  - Delete and Edit expenses.
-- **📉 Budgeting**: Set monthly limits per category and track progress visually.
-- **⚙️ Categories**: Manage custom categories to organize your spending.
-- **📱 Responsive**: Optimized for both desktop and mobile web.
+## 🌐 Live Demo
+**[Launch Application](https://your-deployed-app.vercel.app)**  
+*(Replace this link with your actual Vercel deployment URL)*
 
-## 🛠️ Tech Stack
+## ✨ Key Features
 
-- **Frontend**: React 18, Vite, React Router DOM
-- **Backend**: Supabase (PostgreSQL, Auth, RLS)
-- **Styling**: CSS Modules / Native CSS Variables
-- **Icons**: Lucide React
+### 1. comprehensive Financial Tracking
+- **Income & Expense Management**: Distinctly track cash inflows and outflows.
+- **Real-Time Savings Analysis**: Auto-calculates your net savings and savings rate (%) instantly.
+- **Categorization**: Organize finances with custom tags (e.g., *Salary, Rent, Investments*).
 
-## 🚀 Getting Started
+### 2. Smart Budgeting
+- **Monthly Global Limits**: Set a hard cap on monthly spending to maintain financial discipline.
+- **Granular Category Budgets**: Define specific limits for individual categories like 'Dining Out' or 'Entertainment'.
+- **Visual Indicators**: Immediate visual feedback (Green/Red) when approaching or exceeding budget limits.
 
-### Prerequisites
-- Node.js (v16+)
-- A Supabase Project
+### 3. Sophisticated UI/UX
+- **Notion-Inspired Design**: A distraction-free, minimalist interface using a neutral monochrome palette with purposeful color accents.
+- **Motion Design**: Smooth, micro-interactions powered by `framer-motion` for a premium feel.
+- **Responsive**: Fully optimized experience across Desktop, Tablet, and Mobile devices.
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/Vishallakshmikanthan/expense_tracker.git
-cd expense_tracker
-```
+## 🛠️ Technical Architecture
 
-### 2. Install Dependencies
-```bash
-npm install
-```
+This application utilizes a modern serverless architecture to ensure scalability and performance.
 
-### 3. Configure Environment
-Create a `.env` file in the root directory:
-```properties
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+*   **Frontend**: React 18 (Vite)
+*   **State Management**: React Context API
+*   **Backend / Database**: Supabase (PostgreSQL)
+*   **Authentication**: Supabase Auth (JWT with Row Level Security)
+*   **Styling**: Uncompiled CSS Modules (Performance-first)
+*   **Routing**: React Router v6
 
-### 4. Run Locally
-```bash
-npm run dev
-```
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+## 🔒 Security & Privacy
 
-## 🌐 Deployment (Vercel)
+Privacy is a core tenet of this architecture.
+*   **Row Level Security (RLS)**: Database policies strictly enforce that users can **only** access their own records. Data isolation is handled at the database engine level, not just the application layer.
+*   **Secure Auth**: Authentication is handled via secure, HTTP-only flows.
 
-This project is optimized for deployment on Vercel.
+## 🚀 Deployment Guide
 
-1.  Push this code to your GitHub repository.
-2.  Import the project into Vercel.
-3.  Add the **Environment Variables** in Vercel Project Settings:
-    - `VITE_SUPABASE_URL`
-    - `VITE_SUPABASE_ANON_KEY`
-4.  Deploy! 🚀
+This project is configured for one-click deployment on **Vercel**.
 
-## 📂 Project Structure
-
-```
-src/
-├── components/     # Reusable components (ProtectedRoute, etc.)
-├── contexts/       # Global state (AuthContext)
-├── lib/            # Supabase client configuration
-├── pages/          # Application views (Home, Login, Expenses, etc.)
-├── App.jsx         # Main routing logic
-└── main.jsx        # Entry point
-```
-
-## 🔒 Security
-- **Row Level Security (RLS)**: Users can only see and edit their own data.
-- **Protected Routes**: Unauthenticated users are redirected to the Login page.
+1.  **Fork/Clone** this repository.
+2.  **Import** into Vercel.
+3.  **Configure Environment Variables**:
+    *   `VITE_SUPABASE_URL`: Your Supabase Project URL.
+    *   `VITE_SUPABASE_ANON_KEY`: Your Supabase Public API Key.
+4.  **Deploy**.
 
 ---
-*Built as part of the Antigravity Project.*
+*Developed by [Your Name]*
