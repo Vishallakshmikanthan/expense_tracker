@@ -131,21 +131,74 @@ export default function Budgets() {
 
                         const pct = globalLimit > 0 ? (globalSpent / globalLimit) * 100 : 0;
                         const isOver = globalSpent > globalLimit && globalLimit > 0;
+                        const isNearLimit = pct >= 80 && pct < 100;
 
                         return (
-                            <motion.div layout className="expense-item" style={{ display: 'block', border: '2px solid #6366f1' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                                    <span style={{ fontWeight: 700, color: '#6366f1' }}>Total Monthly Spending</span>
-                                    <span>₹{globalSpent.toLocaleString()} / <span style={{ color: '#999' }}>{globalLimit || '∞'}</span></span>
+                            <motion.div
+                                layout
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="expense-item"
+                                style={{
+                                    display: 'block',
+                                    border: `2px solid ${isOver ? '#EF4444' : isNearLimit ? '#F59E0B' : '#667eea'}`,
+                                    background: isOver
+                                        ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.02) 100%)'
+                                        : isNearLimit
+                                            ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(245, 158, 11, 0.02) 100%)'
+                                            : 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(102, 126, 234, 0.02) 100%)'
+                                }}
+                            >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                                    <span style={{ fontWeight: 700, fontSize: '1rem', color: '#667eea' }}>Total Monthly Budget</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                                            <IndianRupee size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />{globalSpent.toLocaleString()}
+                                        </span>
+                                        <span style={{ color: '#94A3B8' }}>/</span>
+                                        <span style={{ color: '#64748B', fontSize: '0.9rem' }}>
+                                            <IndianRupee size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />{globalLimit || '∞'}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div style={{ height: 12, background: '#f1f3f5', borderRadius: 6, overflow: 'hidden' }}>
-                                    <div style={{
-                                        height: '100%',
-                                        width: `${Math.min(pct, 100)}%`,
-                                        background: isOver ? '#ff6b6b' : '#6366f1',
-                                        transition: 'width 0.5s ease-out'
-                                    }}></div>
+                                <div style={{ position: 'relative', height: 14, background: '#F1F5F9', borderRadius: 8, overflow: 'hidden' }}>
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${Math.min(pct, 100)}%` }}
+                                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                                        style={{
+                                            height: '100%',
+                                            background: isOver
+                                                ? 'linear-gradient(90deg, #F87171 0%, #EF4444 100%)'
+                                                : isNearLimit
+                                                    ? 'linear-gradient(90deg, #FBBF24 0%, #F59E0B 100%)'
+                                                    : 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                                            borderRadius: 8,
+                                            position: 'relative',
+                                            overflow: 'hidden'
+                                        }}
+                                    >
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                                            animation: 'shimmer 2s infinite'
+                                        }} />
+                                    </motion.div>
                                 </div>
+                                {isNearLimit && !isOver && (
+                                    <div style={{ fontSize: '0.75rem', color: '#F59E0B', marginTop: '0.5rem', fontWeight: 500 }}>
+                                        ⚠️ {Math.round(100 - pct)}% remaining
+                                    </div>
+                                )}
+                                {isOver && (
+                                    <div style={{ fontSize: '0.75rem', color: '#EF4444', marginTop: '0.5rem', fontWeight: 500 }}>
+                                        🔴 Over budget by ₹{(globalSpent - globalLimit).toLocaleString()}
+                                    </div>
+                                )}
                             </motion.div>
                         );
                     })()}
@@ -158,28 +211,56 @@ export default function Budgets() {
                         const spent = spending[cat.name] || 0;
                         const pct = budgetAmount > 0 ? (spent / budgetAmount) * 100 : 0;
                         const isOver = spent > budgetAmount && budgetAmount > 0;
+                        const isNearLimit = pct >= 80 && pct < 100;
 
                         return (
                             <motion.div
                                 key={cat.name}
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: i * 0.05 }}
+                                transition={{ delay: i * 0.05, type: 'spring' }}
+                                whileHover={{ x: 4 }}
                                 className="expense-item"
-                                style={{ display: 'block' }}
+                                style={{
+                                    display: 'block',
+                                    borderLeft: `4px solid ${isOver ? '#EF4444' : isNearLimit ? '#F59E0B' : '#10B981'}`
+                                }}
                             >
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                                    <span style={{ fontWeight: 500 }}>{cat.name}</span>
-                                    <span>₹{spent.toLocaleString()} / <span style={{ color: '#999' }}>{budgetAmount || '∞'}</span></span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                                    <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{cat.name}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+                                            <IndianRupee size={12} style={{ display: 'inline', verticalAlign: 'middle' }} />{spent.toLocaleString()}
+                                        </span>
+                                        <span style={{ color: '#94A3B8' }}>/</span>
+                                        <span style={{ color: '#64748B', fontSize: '0.85rem' }}>
+                                            <IndianRupee size={12} style={{ display: 'inline', verticalAlign: 'middle' }} />{budgetAmount || '∞'}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div style={{ height: 8, background: '#f1f3f5', borderRadius: 4, overflow: 'hidden' }}>
-                                    <div style={{
-                                        height: '100%',
-                                        width: `${Math.min(pct, 100)}%`,
-                                        background: isOver ? '#ff6b6b' : '#34d399',
-                                        transition: 'width 0.5s ease-out'
-                                    }}></div>
+                                <div style={{ position: 'relative', height: 10, background: '#F1F5F9', borderRadius: 6, overflow: 'hidden' }}>
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${Math.min(pct, 100)}%` }}
+                                        transition={{ duration: 0.6, delay: i * 0.05, ease: 'easeOut' }}
+                                        style={{
+                                            height: '100%',
+                                            background: isOver
+                                                ? 'linear-gradient(90deg, #F87171 0%, #EF4444 100%)'
+                                                : isNearLimit
+                                                    ? 'linear-gradient(90deg, #FBBF24 0%, #F59E0B 100%)'
+                                                    : 'linear-gradient(90deg, #10B981 0%, #059669 100%)',
+                                            borderRadius: 6
+                                        }}
+                                    />
                                 </div>
+                                {pct > 0 && (
+                                    <div style={{ fontSize: '0.7rem', color: '#64748B', marginTop: '0.5rem' }}>
+                                        {Math.round(pct)}% spent
+                                        {isNearLimit && !isOver && ' ⚠️'}
+                                        {isOver && ' 🔴'}
+                                    </div>
+                                )}
                             </motion.div>
                         );
                     })}
