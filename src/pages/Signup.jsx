@@ -44,12 +44,12 @@ export default function Signup() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{
                     opacity: 1,
-                    y: [0, -8, 0],
+                    y: [0, -4, 0], // Reduced float amplitude
                 }}
                 transition={{
                     opacity: { duration: 0.5, ease: 'easeOut' },
                     y: {
-                        duration: 4,
+                        duration: 6, // Slower float
                         repeat: Infinity,
                         ease: 'easeInOut'
                     }
@@ -58,7 +58,7 @@ export default function Signup() {
                 {/* App Branding */}
                 <div className="auth-brand">
                     <h1>Expense Tracker</h1>
-                    <p>Track. Save. Grow.</p>
+                    <p>Professional Finance Management</p>
                 </div>
 
                 <h2 className="auth-title">Create Account</h2>
@@ -121,16 +121,14 @@ export default function Signup() {
 
                     <motion.button
                         type="submit"
-                        className="btn btn-premium"
+                        className="btn"
                         disabled={loading}
-                        whileHover={{ scale: loading ? 1 : 1.02 }}
-                        whileTap={{ scale: loading ? 1 : 0.98 }}
+                        whileHover={{ scale: loading ? 1 : 1.01 }}
+                        whileTap={{ scale: loading ? 1 : 0.99 }}
                         style={{
                             width: '100%',
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            color: 'white',
-                            border: 'none',
-                            marginTop: '0.5rem'
+                            marginTop: '1rem',
+                            height: '46px'
                         }}
                     >
                         {loading ? (
@@ -151,3 +149,4 @@ export default function Signup() {
         </div>
     );
 }
+
