@@ -33,8 +33,18 @@ export default function Login() {
             <motion.div
                 className="auth-card"
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
+                animate={{
+                    opacity: 1,
+                    y: [0, -8, 0],
+                }}
+                transition={{
+                    opacity: { duration: 0.5, ease: 'easeOut' },
+                    y: {
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: 'easeInOut'
+                    }
+                }}
             >
                 {/* App Branding */}
                 <div className="auth-brand">
