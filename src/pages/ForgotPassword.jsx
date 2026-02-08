@@ -23,8 +23,13 @@ export default function ForgotPassword() {
             setError('');
             setLoading(true);
 
+            // Use production URL for password reset
+            const resetUrl = window.location.hostname === 'localhost'
+                ? `${window.location.origin}/reset-password`
+                : 'https://expense-tracker-one-green-12.vercel.app/reset-password';
+
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/reset-password`,
+                redirectTo: resetUrl,
             });
 
             if (error) throw error;

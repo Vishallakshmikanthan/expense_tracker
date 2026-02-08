@@ -10,19 +10,40 @@ export default function ResetPassword() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [initializing, setInitializing] = useState(true);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
+    const [hasValidToken, setHasValidToken] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check if user has valid recovery session
-        const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                setError('Invalid or expired reset link. Please request a new one.');
+        const initializeSession = async () => {
+            try {
+                // Supabase automatically handles the recovery token from URL hash
+                // Just check if we have a valid session
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error) {
+                    console.error('Session error:', error);
+                    setError('Invalid or expired reset link. Please request a new one.');
+                    setHasValidToken(false);
+                } else if (!session) {
+                    setError('No active session. Please request a new password reset link.');
+                    setHasValidToken(false);
+                } else {
+                    // Valid session from recovery token
+                    setHasValidToken(true);
+                }
+            } catch (err) {
+                console.error('Initialize error:', err);
+                setError('Failed to initialize password reset. Please try again.');
+                setHasValidToken(false);
+            } finally {
+                setInitializing(false);
             }
         };
-        checkSession();
+
+        initializeSession();
     }, []);
 
     const validatePassword = () => {
@@ -63,11 +84,101 @@ export default function ResetPassword() {
                 navigate('/login');
             }, 2000);
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'Failed to update password');
         } finally {
             setLoading(false);
         }
     };
+
+    // Show loading state while initializing
+    if (initializing) {
+        return (
+            <div className="auth-container">
+                <motion.div
+                    className="auth-card"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    style={{ textAlign: 'center', padding: '3rem' }}
+                >
+                    <div className="auth-brand">
+                        <h1>Expense Tracker</h1>
+                        <p>Track. Save. Grow.</p>
+                    </div>
+                    <Loader2
+                        size={48}
+                        color="#a78bfa"
+                        style={{
+                            animation: 'spin 1s linear infinite',
+                            margin: '2rem auto',
+                            display: 'block'
+                        }}
+                    />
+                    <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                        Verifying reset link...
+                    </p>
+                </motion.div>
+            </div>
+        );
+    }
+
+    // Show error state if no valid token
+    if (!hasValidToken && !initializing) {
+        return (
+            <div className="auth-container">
+                <motion.div
+                    className="auth-card"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    <div className="auth-brand">
+                        <h1>Expense Tracker</h1>
+                        <p>Track. Save. Grow.</p>
+                    </div>
+
+                    <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+                        <div style={{
+                            width: 80,
+                            height: 80,
+                            borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 1.5rem',
+                            boxShadow: '0 8px 24px rgba(239, 68, 68, 0.4)'
+                        }}>
+                            <AlertCircle size={40} color="white" />
+                        </div>
+                        <h3 style={{ color: '#f1f5f9', marginBottom: '0.5rem', fontSize: '1.5rem' }}>
+                            Invalid Reset Link
+                        </h3>
+                        <p style={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: '2rem', fontSize: '0.95rem' }}>
+                            {error || 'This password reset link is invalid or has expired.'}
+                        </p>
+                        <motion.button
+                            onClick={() => navigate('/forgot-password')}
+                            className="btn"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            style={{ marginBottom: '0.5rem' }}
+                        >
+                            Request New Link
+                        </motion.button>
+                        <br />
+                        <motion.button
+                            onClick={() => navigate('/login')}
+                            className="btn-secondary"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            style={{ marginTop: '0.5rem' }}
+                        >
+                            Back to Login
+                        </motion.button>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    }
 
     return (
         <div className="auth-container">
