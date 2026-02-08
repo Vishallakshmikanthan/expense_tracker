@@ -122,6 +122,22 @@ export default function Login() {
                     </motion.button>
                 </form>
 
+                {/* Forgot Password Link */}
+                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                    <Link
+                        to="/forgot-password"
+                        style={{
+                            color: '#a78bfa',
+                            textDecoration: 'none',
+                            fontSize: '0.9rem',
+                            fontWeight: 500,
+                            transition: 'color 0.2s ease'
+                        }}
+                    >
+                        Forgot Password?
+                    </Link>
+                </div>
+
                 <div className="link-text">
                     Don't have an account? <Link to="/signup">Sign Up</Link>
                 </div>
