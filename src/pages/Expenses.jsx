@@ -66,11 +66,15 @@ export default function Expenses() {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="dashboard">
             <header className="app-header">
-                <button onClick={() => navigate('/')} className="btn-logout" style={{ display: 'flex', alignItems: 'center' }}>
-                    <ChevronLeft size={20} /> Home
+                <button
+                    onClick={() => navigate('/')}
+                    className="btn-logout"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                    <ChevronLeft size={18} /> Home
                 </button>
                 <h2>Transactions</h2>
-                <div style={{ width: 32 }}></div>
+                <div style={{ width: 60 }}></div>
             </header>
 
             <div style={{ padding: '0 1rem' }}>
@@ -80,22 +84,21 @@ export default function Expenses() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                     style={{
-                        background: 'rgba(255, 255, 255, 0.95)',
-                        backdropFilter: 'blur(16px)',
-                        border: '1px solid rgba(255, 255, 255, 0.4)',
+                        background: 'var(--bg-secondary)',
+                        border: '1px solid var(--border-color)',
                         borderRadius: 'var(--radius-lg)',
                         padding: '1.5rem',
                         marginBottom: '1.5rem',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.06)'
+                        boxShadow: 'var(--shadow-md)'
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                        <Filter size={20} color="#667eea" />
-                        <span style={{ fontWeight: 600, color: '#1f2937' }}>Filters</span>
+                        <Filter size={18} color="var(--brand-secondary)" />
+                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Filters</span>
                     </div>
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                         <div style={{ flex: 1, minWidth: 200 }}>
-                            <label style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: 6, display: 'block', fontWeight: 500 }}>Month</label>
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: 6, display: 'block', fontWeight: 500 }}>Month</label>
                             <input
                                 type="month"
                                 value={filterDate}
@@ -103,32 +106,37 @@ export default function Expenses() {
                                 style={{
                                     padding: '0.75rem',
                                     width: '100%',
-                                    border: '2px solid #e5e7eb',
+                                    background: 'var(--bg-tertiary)',
+                                    border: '1px solid var(--border-color)',
+                                    color: 'var(--text-primary)',
                                     borderRadius: 'var(--radius-md)',
                                     fontSize: '0.95rem',
-                                    transition: 'all 0.2s ease'
+                                    transition: 'all 0.2s ease',
+                                    outline: 'none'
                                 }}
-                                onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                onFocus={(e) => e.target.style.borderColor = 'var(--brand-secondary)'}
+                                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
                             />
                         </div>
                         <div style={{ flex: 1, minWidth: 200 }}>
-                            <label style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: 6, display: 'block', fontWeight: 500 }}>Category</label>
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: 6, display: 'block', fontWeight: 500 }}>Category</label>
                             <select
                                 value={filterCategory}
                                 onChange={e => setFilterCategory(e.target.value)}
                                 style={{
                                     padding: '0.75rem',
                                     width: '100%',
-                                    border: '2px solid #e5e7eb',
+                                    background: 'var(--bg-tertiary)',
+                                    border: '1px solid var(--border-color)',
+                                    color: 'var(--text-primary)',
                                     borderRadius: 'var(--radius-md)',
                                     fontSize: '0.95rem',
-                                    background: 'white',
                                     cursor: 'pointer',
-                                    transition: 'all 0.2s ease'
+                                    transition: 'all 0.2s ease',
+                                    outline: 'none'
                                 }}
-                                onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                onFocus={(e) => e.target.style.borderColor = 'var(--brand-secondary)'}
+                                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
                             >
                                 <option value="All">All Categories</option>
                                 {categories.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
@@ -147,23 +155,47 @@ export default function Expenses() {
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 key={item.id}
                                 className="expense-item"
+                                style={{
+                                    background: 'var(--bg-secondary)',
+                                    borderColor: 'var(--border-color)'
+                                }}
                             >
                                 <div style={{ flex: 1 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <span style={{ fontWeight: 600, fontSize: '1rem' }}>{item.category}</span>
-                                        <span style={{ fontSize: '0.8rem', color: '#999' }}>{new Date(item.date).toLocaleDateString()}</span>
+                                        <span style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--text-primary)' }}>{item.category}</span>
+                                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{new Date(item.date).toLocaleDateString()}</span>
                                     </div>
-                                    {item.description && <div style={{ fontSize: '0.9rem', color: '#555', marginTop: 4 }}>{item.description}</div>}
+                                    {item.description && <div style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', marginTop: 4 }}>{item.description}</div>}
                                 </div>
                                 <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                    <span className="expense-amount" style={{ display: 'flex', alignItems: 'center', color: item.type === 'income' ? '#10b981' : '#ef4444' }}>
-                                        {item.type === 'income' ? '+' : '-'}<IndianRupee size={16} strokeWidth={2.5} />{item.amount}
+                                    <span className="expense-amount" style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        color: item.type === 'income' ? 'var(--success)' : 'var(--danger)'
+                                    }}>
+                                        {item.type === 'income' ? '+' : '-'}<IndianRupee size={16} strokeWidth={2.5} />{item.amount.toLocaleString()}
                                     </span>
-                                    <div style={{ display: 'flex', gap: '0.25rem' }}>
-                                        <button onClick={() => navigate(`/edit/${item.id}`)} className="btn-logout" style={{ background: '#f3f4f6', color: '#6366f1' }}>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <button
+                                            onClick={() => navigate(`/edit/${item.id}`)}
+                                            className="btn-logout"
+                                            style={{
+                                                background: 'rgba(59, 130, 246, 0.1)',
+                                                color: '#3B82F6',
+                                                border: '1px solid rgba(59, 130, 246, 0.2)'
+                                            }}
+                                        >
                                             <Edit2 size={16} />
                                         </button>
-                                        <button onClick={() => handleDelete(item.id)} className="btn-logout">
+                                        <button
+                                            onClick={() => handleDelete(item.id)}
+                                            className="btn-logout"
+                                            style={{
+                                                background: 'rgba(239, 68, 68, 0.1)',
+                                                color: '#EF4444',
+                                                border: '1px solid rgba(239, 68, 68, 0.2)'
+                                            }}
+                                        >
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
@@ -172,7 +204,7 @@ export default function Expenses() {
                         ))}
                     </AnimatePresence>
                     {expenses.length === 0 && !loading && (
-                        <div style={{ textAlign: 'center', color: '#999', padding: '2rem' }}>No transactions found.</div>
+                        <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>No transactions found.</div>
                     )}
                 </div>
             </div>

@@ -42,11 +42,6 @@ export default function Home() {
             setTotalSpent(spending);
             setRecentExpenses(expenses.slice(0, 5));
 
-            // ... (rest of function logic unchanged)
-            // [SKIP MATCHING MIDDLE CONTENT AND JUMP TO UI LOOP]
-            // Actually, since I can't skip, I will use multi_replace.
-            // Aborting this call to use multi_replace for accuracy.
-
             // 2. Fetch Total Budget (Special Category '_GLOBAL_')
             const { data: globalBudget, error: budError } = await supabase
                 .from('budgets')
@@ -96,7 +91,7 @@ export default function Home() {
                     whileHover={{ scale: 1.02 }}
                     className="stat-card"
                     style={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        background: 'var(--gradient-primary)',
                         color: 'white',
                         border: 'none'
                     }}
@@ -120,7 +115,7 @@ export default function Home() {
                     className="stat-card"
                     style={{
                         background: isOverBudget
-                            ? 'linear-gradient(135deg, #F87171 0%, #EF4444 100%)'
+                            ? 'linear-gradient(135deg, #EF4444 0%, #B91C1C 100%)'
                             : 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
                         color: 'white',
                         border: 'none'
@@ -145,15 +140,10 @@ export default function Home() {
                 <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>Recent Activity</h2>
                 <Link
                     to="/add"
-                    className="btn btn-premium"
+                    className="btn"
                     style={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        color: 'white',
-                        border: 'none',
-                        boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
+                        boxShadow: '0 4px 15px rgba(15, 157, 88, 0.4)',
+                        textDecoration: 'none'
                     }}
                 >
                     <Plus size={18} strokeWidth={2.5} /> Add Transaction
@@ -169,7 +159,7 @@ export default function Home() {
                     <div style={{
                         textAlign: 'center',
                         padding: '3rem',
-                        background: 'var(--bg-surface)',
+                        background: 'var(--bg-secondary)',
                         borderRadius: 'var(--radius-lg)',
                         border: '2px dashed var(--border-color)'
                     }}>
@@ -190,15 +180,16 @@ export default function Home() {
                                     padding: '10px',
                                     borderRadius: 'var(--radius-md)',
                                     background: item.type === 'income'
-                                        ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
-                                        : 'linear-gradient(135deg, #F87171 0%, #EF4444 100%)',
+                                        ? 'rgba(16, 185, 129, 0.1)'
+                                        : 'rgba(239, 68, 68, 0.1)',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    justifyContent: 'center'
+                                    justifyContent: 'center',
+                                    border: `1px solid ${item.type === 'income' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`
                                 }}>
                                     {item.type === 'income'
-                                        ? <TrendingUp size={18} color="white" strokeWidth={2.5} />
-                                        : <TrendingDown size={18} color="white" strokeWidth={2.5} />}
+                                        ? <TrendingUp size={18} color="#10B981" strokeWidth={2.5} />
+                                        : <TrendingDown size={18} color="#EF4444" strokeWidth={2.5} />}
                                 </div>
                                 <div>
                                     <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
@@ -213,7 +204,7 @@ export default function Home() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 fontWeight: 700,
-                                color: item.type === 'income' ? 'var(--income-color)' : 'var(--text-primary)'
+                                color: item.type === 'income' ? 'var(--success)' : 'var(--text-primary)'
                             }}>
                                 {item.type === 'income' ? '+' : ''}<IndianRupee size={16} strokeWidth={2.5} />{item.amount.toLocaleString()}
                             </div>
