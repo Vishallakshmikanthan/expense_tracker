@@ -74,31 +74,68 @@ export default function Expenses() {
             </header>
 
             <div style={{ padding: '0 1rem' }}>
-                {/* Filters */}
-                <div className="auth-card" style={{ maxWidth: '100%', marginBottom: '1.5rem', padding: '1rem' }}>
+                {/* Premium Filters Card */}
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    style={{
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(16px)',
+                        border: '1px solid rgba(255, 255, 255, 0.4)',
+                        borderRadius: 'var(--radius-lg)',
+                        padding: '1.5rem',
+                        marginBottom: '1.5rem',
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.06)'
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                        <Filter size={20} color="#667eea" />
+                        <span style={{ fontWeight: 600, color: '#1f2937' }}>Filters</span>
+                    </div>
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4, display: 'block' }}>Month</label>
+                        <div style={{ flex: 1, minWidth: 200 }}>
+                            <label style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: 6, display: 'block', fontWeight: 500 }}>Month</label>
                             <input
                                 type="month"
                                 value={filterDate}
                                 onChange={e => setFilterDate(e.target.value)}
-                                style={{ padding: '0.5rem' }}
+                                style={{
+                                    padding: '0.75rem',
+                                    width: '100%',
+                                    border: '2px solid #e5e7eb',
+                                    borderRadius: 'var(--radius-md)',
+                                    fontSize: '0.95rem',
+                                    transition: 'all 0.2s ease'
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                             />
                         </div>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4, display: 'block' }}>Category</label>
+                        <div style={{ flex: 1, minWidth: 200 }}>
+                            <label style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: 6, display: 'block', fontWeight: 500 }}>Category</label>
                             <select
                                 value={filterCategory}
                                 onChange={e => setFilterCategory(e.target.value)}
-                                style={{ padding: '0.6rem' }}
+                                style={{
+                                    padding: '0.75rem',
+                                    width: '100%',
+                                    border: '2px solid #e5e7eb',
+                                    borderRadius: 'var(--radius-md)',
+                                    fontSize: '0.95rem',
+                                    background: 'white',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease'
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                             >
                                 <option value="All">All Categories</option>
                                 {categories.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
                             </select>
                         </div>
                     </div>
-                </div>
+                </motion.div>
 
                 <div className="expense-list" style={{ padding: 0 }}>
                     <AnimatePresence>
