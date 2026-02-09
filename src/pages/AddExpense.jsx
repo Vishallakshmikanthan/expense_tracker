@@ -82,7 +82,11 @@ export default function AddExpense() {
     return (
         <div className="dashboard">
             <header className="app-header">
-                <button onClick={() => navigate(-1)} className="btn-logout" style={{ display: 'flex', alignItems: 'center' }}>
+                <button
+                    onClick={() => navigate(-1)}
+                    className="btn-logout"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
                     <ChevronLeft size={20} /> Back
                 </button>
                 <h2>Add Transaction</h2>
@@ -90,24 +94,34 @@ export default function AddExpense() {
             </header>
 
             <div style={{ padding: '0 1rem' }}>
-                <div className="auth-card" style={{ maxWidth: '100%', boxSizing: 'border-box' }}>
+                <div className="auth-card" style={{ maxWidth: '100%', boxSizing: 'border-box', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label>Type</label>
+                            <label style={{ color: 'var(--text-secondary)' }}>Type</label>
                             <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
                                 <button
                                     type="button"
-                                    className={`btn ${formData.type === 'expense' ? '' : 'btn-secondary'}`}
+                                    className={`btn`}
                                     onClick={() => setFormData({ ...formData, type: 'expense' })}
-                                    style={{ flex: 1, backgroundColor: formData.type === 'expense' ? '#ef4444' : '#fff', color: formData.type === 'expense' ? '#fff' : '#333' }}
+                                    style={{
+                                        flex: 1,
+                                        backgroundColor: formData.type === 'expense' ? '#EF4444' : 'var(--bg-tertiary)',
+                                        color: formData.type === 'expense' ? '#fff' : 'var(--text-primary)',
+                                        border: formData.type === 'expense' ? 'none' : '1px solid var(--border-color)'
+                                    }}
                                 >
                                     Expense
                                 </button>
                                 <button
                                     type="button"
-                                    className={`btn ${formData.type === 'income' ? '' : 'btn-secondary'}`}
+                                    className={`btn`}
                                     onClick={() => setFormData({ ...formData, type: 'income' })}
-                                    style={{ flex: 1, backgroundColor: formData.type === 'income' ? '#10b981' : '#fff', color: formData.type === 'income' ? '#fff' : '#333' }}
+                                    style={{
+                                        flex: 1,
+                                        backgroundColor: formData.type === 'income' ? '#10B981' : 'var(--bg-tertiary)',
+                                        color: formData.type === 'income' ? '#fff' : 'var(--text-primary)',
+                                        border: formData.type === 'income' ? 'none' : '1px solid var(--border-color)'
+                                    }}
                                 >
                                     Income
                                 </button>
@@ -115,7 +129,7 @@ export default function AddExpense() {
                         </div>
 
                         <div className="form-group">
-                            <label>Amount (₹)</label>
+                            <label style={{ color: 'var(--text-secondary)' }}>Amount (₹)</label>
                             <input
                                 type="number"
                                 step="0.01"
@@ -123,41 +137,46 @@ export default function AddExpense() {
                                 min="0.01"
                                 value={formData.amount}
                                 onChange={e => setFormData({ ...formData, amount: e.target.value })}
+                                className="premium-input"
                             />
                         </div>
 
                         <div className="form-group">
-                            <label>Category</label>
+                            <label style={{ color: 'var(--text-secondary)' }}>Category</label>
                             <select
                                 required
                                 value={formData.category}
                                 onChange={e => setFormData({ ...formData, category: e.target.value })}
                                 disabled={categories.length === 0}
+                                className="premium-input"
+                                style={{ appearance: 'none' }}
                             >
                                 {categories.length === 0 && <option value="">No categories found for {formData.type}</option>}
                                 {categories.map(cat => (
                                     <option key={cat.id} value={cat.name}>{cat.name}</option>
                                 ))}
                             </select>
-                            {categories.length === 0 && <div style={{ marginTop: 5, fontSize: '0.8rem' }}>Go to <a href="/categories">Categories</a> to add {formData.type} categories.</div>}
+                            {categories.length === 0 && <div style={{ marginTop: 5, fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Go to <a href="/categories" style={{ color: 'var(--brand-primary)' }}>Categories</a> to add {formData.type} categories.</div>}
                         </div>
 
                         <div className="form-group">
-                            <label>Date</label>
+                            <label style={{ color: 'var(--text-secondary)' }}>Date</label>
                             <input
                                 type="date"
                                 required
                                 value={formData.date}
                                 onChange={e => setFormData({ ...formData, date: e.target.value })}
+                                className="premium-input"
                             />
                         </div>
 
                         <div className="form-group">
-                            <label>Note (Optional)</label>
+                            <label style={{ color: 'var(--text-secondary)' }}>Note (Optional)</label>
                             <input
                                 type="text"
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                className="premium-input"
                             />
                         </div>
 

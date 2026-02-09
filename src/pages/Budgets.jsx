@@ -87,7 +87,11 @@ export default function Budgets() {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="dashboard">
             <header className="app-header">
-                <button onClick={() => navigate('/')} className="btn-logout" style={{ display: 'flex', alignItems: 'center' }}>
+                <button
+                    onClick={() => navigate('/')}
+                    className="btn-logout"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
                     <ChevronLeft size={20} /> Home
                 </button>
                 <h2>Monthly Budgets</h2>
@@ -95,26 +99,50 @@ export default function Budgets() {
             </header>
 
             <div style={{ padding: '0 1rem' }}>
-                <div className="auth-card" style={{ maxWidth: '100%', marginBottom: '2rem' }}>
-                    <h4>Set Budget Limit</h4>
+                <div
+                    className="auth-card"
+                    style={{
+                        maxWidth: '100%',
+                        marginBottom: '2rem',
+                        background: 'var(--bg-secondary)',
+                        border: '1px solid var(--border-color)'
+                    }}
+                >
+                    <h4 style={{ color: 'var(--text-primary)' }}>Set Budget Limit</h4>
                     <form onSubmit={handleSetBudget} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
                         <select
                             value={selectedCategory}
                             onChange={e => setSelectedCategory(e.target.value)}
-                            style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd' }}
+                            style={{
+                                flex: 1,
+                                padding: '0.75rem',
+                                borderRadius: '8px',
+                                border: '1px solid var(--border-color)',
+                                background: 'var(--bg-tertiary)',
+                                color: 'var(--text-primary)',
+                                outline: 'none'
+                            }}
                         >
                             <option value="_GLOBAL_">Total Monthly Budget</option>
                             <option disabled>──────────</option>
                             {categories.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
                         </select>
-                        <div style={{ position: 'relative', width: 100 }}>
-                            <span style={{ position: 'absolute', left: 10, top: 12, color: '#999' }}>₹</span>
+                        <div style={{ position: 'relative', width: 120 }}>
+                            <span style={{ position: 'absolute', left: 10, top: 12, color: 'var(--text-tertiary)' }}>₹</span>
                             <input
                                 type="number"
                                 placeholder="Amount"
                                 value={amount}
                                 onChange={e => setAmount(e.target.value)}
-                                style={{ width: '100%', padding: '0.75rem 0.5rem 0.75rem 1.8rem', borderRadius: '8px', border: '1px solid #ddd' }}
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem 0.5rem 0.75rem 1.8rem',
+                                    borderRadius: '8px',
+                                    border: '1px solid var(--border-color)',
+                                    background: 'var(--bg-tertiary)',
+                                    color: 'var(--text-primary)',
+                                    outline: 'none'
+                                }}
                             />
                         </div>
                         <button type="submit" className="btn" style={{ width: 'auto' }}>Set</button>
@@ -141,27 +169,23 @@ export default function Budgets() {
                                 className="expense-item"
                                 style={{
                                     display: 'block',
-                                    border: `2px solid ${isOver ? '#EF4444' : isNearLimit ? '#F59E0B' : '#667eea'}`,
-                                    background: isOver
-                                        ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.02) 100%)'
-                                        : isNearLimit
-                                            ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(245, 158, 11, 0.02) 100%)'
-                                            : 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(102, 126, 234, 0.02) 100%)'
+                                    border: `2px solid ${isOver ? '#EF4444' : isNearLimit ? '#F59E0B' : 'var(--brand-primary)'}`,
+                                    background: 'var(--bg-secondary)'
                                 }}
                             >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                                    <span style={{ fontWeight: 700, fontSize: '1rem', color: '#667eea' }}>Total Monthly Budget</span>
+                                    <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--brand-primary)' }}>Total Monthly Budget</span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                                             <IndianRupee size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />{globalSpent.toLocaleString()}
                                         </span>
-                                        <span style={{ color: '#94A3B8' }}>/</span>
-                                        <span style={{ color: '#64748B', fontSize: '0.9rem' }}>
+                                        <span style={{ color: 'var(--text-tertiary)' }}>/</span>
+                                        <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                                             <IndianRupee size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />{globalLimit || '∞'}
                                         </span>
                                     </div>
                                 </div>
-                                <div style={{ position: 'relative', height: 14, background: '#F1F5F9', borderRadius: 8, overflow: 'hidden' }}>
+                                <div style={{ position: 'relative', height: 14, background: 'var(--bg-tertiary)', borderRadius: 8, overflow: 'hidden' }}>
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${Math.min(pct, 100)}%` }}
@@ -172,7 +196,7 @@ export default function Budgets() {
                                                 ? 'linear-gradient(90deg, #F87171 0%, #EF4444 100%)'
                                                 : isNearLimit
                                                     ? 'linear-gradient(90deg, #FBBF24 0%, #F59E0B 100%)'
-                                                    : 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                                                    : 'var(--gradient-primary)',
                                             borderRadius: 8,
                                             position: 'relative',
                                             overflow: 'hidden'
@@ -223,22 +247,26 @@ export default function Budgets() {
                                 className="expense-item"
                                 style={{
                                     display: 'block',
-                                    borderLeft: `4px solid ${isOver ? '#EF4444' : isNearLimit ? '#F59E0B' : '#10B981'}`
+                                    borderLeft: `4px solid ${isOver ? '#EF4444' : isNearLimit ? '#F59E0B' : '#10B981'}`,
+                                    background: 'var(--bg-secondary)',
+                                    borderColor: 'var(--border-color)',
+                                    borderLeftWidth: '4px',
+                                    borderLeftColor: isOver ? '#EF4444' : isNearLimit ? '#F59E0B' : '#10B981'
                                 }}
                             >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                                    <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{cat.name}</span>
+                                    <span style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{cat.name}</span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+                                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                                             <IndianRupee size={12} style={{ display: 'inline', verticalAlign: 'middle' }} />{spent.toLocaleString()}
                                         </span>
-                                        <span style={{ color: '#94A3B8' }}>/</span>
-                                        <span style={{ color: '#64748B', fontSize: '0.85rem' }}>
+                                        <span style={{ color: 'var(--text-tertiary)' }}>/</span>
+                                        <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                                             <IndianRupee size={12} style={{ display: 'inline', verticalAlign: 'middle' }} />{budgetAmount || '∞'}
                                         </span>
                                     </div>
                                 </div>
-                                <div style={{ position: 'relative', height: 10, background: '#F1F5F9', borderRadius: 6, overflow: 'hidden' }}>
+                                <div style={{ position: 'relative', height: 10, background: 'var(--bg-tertiary)', borderRadius: 6, overflow: 'hidden' }}>
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${Math.min(pct, 100)}%` }}
@@ -255,7 +283,7 @@ export default function Budgets() {
                                     />
                                 </div>
                                 {pct > 0 && (
-                                    <div style={{ fontSize: '0.7rem', color: '#64748B', marginTop: '0.5rem' }}>
+                                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
                                         {Math.round(pct)}% spent
                                         {isNearLimit && !isOver && ' ⚠️'}
                                         {isOver && ' 🔴'}
